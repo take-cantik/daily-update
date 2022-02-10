@@ -1,0 +1,21 @@
+:root {
+  --black: #212121;
+  --black-lighten-1: #757575;
+  --black-lighten-2: #bdbdbd;
+  --black-lighten-3: #e0e0e0;
+  --black-lighten-4: #fbfbfb;
+  --white: #ffffff;
+
+  color: var(--black);
+
+  --montserrat: "Montserrat";
+  --noto-sans-jp: "Noto Sans JP";
+
+  font-family: var(--noto-sans-jp), sans-serif;
+
+  font-size: 10px;
+
+  --z-index--header: 5;
+  --z-index--modal: 10;
+  --z-index--overlay: 100;
+}
