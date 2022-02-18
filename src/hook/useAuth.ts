@@ -16,15 +16,10 @@ export const useAuth = () => {
     return await signInWithPopup(firebaseAuth, provider);
   };
 
-  const twitterLink = async (): Promise<void> => {
+  const twitterLink = async (): Promise<UserCredential | void> => {
     const provider = new TwitterAuthProvider();
     if (firebaseAuth.currentUser) {
-      const credential: UserCredential = await linkWithPopup(
-        firebaseAuth.currentUser,
-        provider
-      );
-      const user = credential.user;
-      console.log(user);
+      return await linkWithPopup(firebaseAuth.currentUser, provider);
     }
   };
 
