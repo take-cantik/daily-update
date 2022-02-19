@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { atom, useSetRecoilState } from "recoil";
-import { TotalContributions, useContributions } from "~/hook/useContributions";
-import { CreateUser, useUser } from "~/hook/useUser";
+import { useUser } from "~/hook/useUser";
+import { useUserCase } from "~/hook/useUserCase";
 import { firebaseAuth } from "~/infra/firebase";
 
 export interface CurrentUser {
@@ -30,8 +30,8 @@ export const authState = atom<AuthState>({
 
 export const AuthInit = () => {
   const setAuthState = useSetRecoilState(authState);
-  const { getTotalContributions } = useContributions();
-  const { findUserById, createUser, addTwitterUser } = useUser();
+  const { findUserById } = useUser();
+  const { create, addTwitter } = useUserCase();
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
@@ -43,57 +43,11 @@ export const AuthInit = () => {
       const currentUser: CurrentUser | undefined = await findUserById(user.uid);
 
       if (!currentUser) {
-        // @ts-ignore
-        const githubUser = user.reloadUserInfo.providerUserInfo[0];
-        const githubId = githubUser.screenName;
-        const totalContributions: TotalContributions =
-          await getTotalContributions(githubId);
-        const initialVersion =
-          Math.floor(totalContributions.value / 1000) * 10000;
-
-        const newUser: CreateUser = {
-          uid: user.uid,
-          githubId: githubId,
-          githubAvatarUrl: githubUser.photoUrl,
-          contributions: totalContributions.value,
-          version: initialVersion
-        };
-
-        const response = await createUser(newUser);
-        console.log(response);
-
-        setAuthState({
-          isLoading: false,
-          currentUser: newUser as CurrentUser
-        });
-
+        create(user);
         return;
       } else {
         if (!currentUser.twitterId && user.providerData.length === 2) {
-          // @ts-ignore
-          const twitterUser = user.reloadUserInfo.providerUserInfo[1];
-          await addTwitterUser(
-            currentUser.id,
-            twitterUser.screenName,
-            twitterUser.photoUrl
-          );
-
-          const newUser: CurrentUser = {
-            id: currentUser.id,
-            uid: currentUser.uid,
-            githubId: currentUser.githubId,
-            githubAvatarUrl: currentUser.githubAvatarUrl,
-            contributions: currentUser.contributions,
-            version: currentUser.version,
-            twitterId: twitterUser.screenName,
-            twitterAvatarUrl: twitterUser.photoUrl
-          };
-
-          setAuthState({
-            isLoading: false,
-            currentUser: newUser
-          });
-
+          addTwitter(user, currentUser);
           return;
         }
       }
