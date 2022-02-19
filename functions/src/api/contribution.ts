@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import { DaliyContributions, TotalContributions } from "../types";
 
 export const getContributinos = async (githubId: string) => {
