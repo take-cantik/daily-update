@@ -1,11 +1,15 @@
 import { User } from "firebase/auth";
 import { useSetRecoilState } from "recoil";
 import { authState, CurrentUser } from "~/state/auth";
-import { TotalContributions, useContributions } from "./useContributions";
+import {
+  DaliyContributions,
+  TotalContributions,
+  useContributions
+} from "./useContributions";
 import { CreateUser, useUser } from "./useUser";
 
 export const useUserCase = () => {
-  const { getTotalContributions } = useContributions();
+  const { getTotalContributions, getDaliyContributions } = useContributions();
   const { createUser, addTwitterUser } = useUser();
   const setAuthState = useSetRecoilState(authState);
 
@@ -13,6 +17,9 @@ export const useUserCase = () => {
     // @ts-ignore
     const githubUser = user.reloadUserInfo.providerUserInfo[0];
     const githubId = githubUser.screenName;
+    const dailyContributions: DaliyContributions = await getDaliyContributions(
+      githubId
+    );
     const totalContributions: TotalContributions = await getTotalContributions(
       githubId
     );
@@ -22,7 +29,8 @@ export const useUserCase = () => {
       uid: user.uid,
       githubId: githubId,
       githubAvatarUrl: githubUser.photoUrl,
-      contributions: totalContributions.value,
+      dailyContributions: dailyContributions.value,
+      totalContributions: totalContributions.value,
       version: initialVersion
     };
 
@@ -49,7 +57,8 @@ export const useUserCase = () => {
       uid: currentUser.uid,
       githubId: currentUser.githubId,
       githubAvatarUrl: currentUser.githubAvatarUrl,
-      contributions: currentUser.contributions,
+      dailyContributions: currentUser.dailyContributions,
+      totalContributions: currentUser.totalContributions,
       version: currentUser.version,
       twitterId: twitterUser.screenName,
       twitterAvatarUrl: twitterUser.photoUrl

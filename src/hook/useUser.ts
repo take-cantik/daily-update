@@ -13,7 +13,8 @@ export interface CreateUser {
   uid: string;
   githubId: string;
   githubAvatarUrl: string;
-  contributions: number;
+  dailyContributions: number[];
+  totalContributions: number;
   version: number;
 }
 
@@ -30,7 +31,8 @@ export const useUser = () => {
           uid: response.docs[0].data().uid,
           githubId: response.docs[0].data().githubId,
           githubAvatarUrl: response.docs[0].data().githubAvatarUrl,
-          contributions: response.docs[0].data().contributions,
+          dailyContributions: response.docs[0].data().dailyContributions,
+          totalContributions: response.docs[0].data().totalContributions,
           version: response.docs[0].data().version,
           twitterId: response.docs[0].data().twitterId,
           twitterAvatarUrl: response.docs[0].data().twitterAvatarUrl

@@ -10,7 +10,8 @@ export interface CurrentUser {
   uid: string;
   githubId: string;
   githubAvatarUrl: string;
-  contributions: number;
+  dailyContributions: number[];
+  totalContributions: number;
   version: number;
   twitterId?: string;
   twitterAvatarUrl?: string;
