@@ -1,10 +1,12 @@
 import fetch from "node-fetch";
 import { DaliyContributions, TotalContributions } from "../types";
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
 export const getContributinos = async (githubId: string) => {
   const responses = await Promise.all([
-    fetch(`/api/dailyContributions/${githubId}`),
-    fetch(`/api/totalContributions/${githubId}`)
+    fetch(`${baseUrl}/api/dailyContributions/${githubId}`),
+    fetch(`${baseUrl}/api/totalContributions/${githubId}`)
   ]);
 
   const dailyContributions = (await responses[0].json()) as DaliyContributions;
