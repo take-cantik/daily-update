@@ -20,7 +20,6 @@ export const useUserCase = () => {
     const dailyContributions: DaliyContributions = await getDaliyContributions(
       githubId
     );
-    console.log(dailyContributions);
     const totalContributions: TotalContributions = await getTotalContributions(
       githubId
     );
