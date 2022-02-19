@@ -4,9 +4,13 @@ import { CurrentUser } from "~/state/auth";
 
 export const useUser = () => {
   const createUser = async (user: CurrentUser) => {
-    const docRef = await addDoc(collection(firestore, "users"), user);
+    try {
+      const docRef = await addDoc(collection(firestore, "users"), user);
 
-    return docRef;
+      return docRef;
+    } catch {
+      throw new Error();
+    }
   };
 
   const findUserById = async (uid: string) => {
@@ -15,7 +19,7 @@ export const useUser = () => {
         query(collection(firestore, "users"), where("uid", "==", uid))
       );
 
-      return response.docs[0].data();
+      return response.docs[0].data() as CurrentUser;
     } catch {
       return null;
     }

@@ -43,9 +43,6 @@ export const AuthInit = () => {
 
       const currentUser = await findUserById(user.uid);
 
-      console.log(currentUser);
-      console.log("ahi");
-
       if (!currentUser) {
         // @ts-ignore
         const githubUser = user.reloadUserInfo.providerUserInfo[0];
@@ -55,30 +52,28 @@ export const AuthInit = () => {
         const initialVersion =
           Math.floor(totalContributions.value / 1000) * 10000;
 
-        const res = await createUser({
+        const newUser = {
           uid: user.uid,
           githubId: githubId,
           githubAvatarUrl: githubUser.photoUrl,
           contributions: totalContributions.value,
           version: initialVersion
-        });
+        };
+
+        const res = await createUser(newUser);
 
         console.log(res);
+
+        setAuthState({
+          isLoading: false,
+          currentUser: newUser
+        });
+      } else {
+        setAuthState({
+          isLoading: false,
+          currentUser
+        });
       }
-
-      // if (user.providerData.length === 2) {
-
-      // }
-      // @ts-ignore
-      const githubId = user.reloadUserInfo.providerUserInfo[0].screenName;
-      const totalContributions: TotalContributions =
-        await getTotalContributions(githubId);
-
-      console.log(totalContributions);
-
-      setAuthState({
-        isLoading: false
-      });
     });
 
     return () => unSub();
