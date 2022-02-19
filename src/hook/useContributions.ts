@@ -3,7 +3,7 @@ export interface TotalContributions {
 }
 
 export interface DaliyContributions {
-  value: number[];
+  values: number[];
 }
 
 export const useContributions = () => {
