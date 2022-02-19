@@ -1,46 +1,38 @@
 import { credential, firestore, initializeApp } from "firebase-admin";
 import { https } from "firebase-functions";
-import { NextApiRequest, NextApiResponse } from "next";
-
-export interface CurrentUser {
-  id: string;
-  uid: string;
-  githubId: string;
-  githubAvatarUrl: string;
-  dailyContributions: number[];
-  totalContributions: number;
-  version: number;
-  twitterId?: string;
-  twitterAvatarUrl?: string;
-}
+import { getContributinos } from "./api/contribution";
+import { getUserList, updateUser } from "./api/user";
+import { CurrentUser } from "./types";
+import { updateVersion } from "./util/version";
 
 const app = initializeApp({
   credential: credential.applicationDefault(),
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DETABASE_URL
 });
-const db = firestore(app);
+export const db = firestore(app);
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = https.onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+export const dailyUpdate = https.onRequest(async (request, response) => {
+  const users: CurrentUser[] = await getUserList();
 
-// export const dailyUpdate = pubsub
-//   .schedule("every 1 days")
-//   .onRun(async () => {
-//     await db.collection("users").get();
-//   });
+  users.forEach(async (user: CurrentUser) => {
+    const newContributions = await getContributinos(user.githubId);
+    const newVersion = updateVersion(
+      user.version,
+      user.dailyContributions,
+      user.totalContributions,
+      newContributions.dailyContributions.values,
+      newContributions.totalContributinos.value
+    );
 
-export const dailyUpdate = https.onRequest(
-  async (request: NextApiRequest, response: NextApiResponse) => {
-    const users: CurrentUser[] = [];
-    const res = await db.collection("users").get();
-    res.forEach((doc) => {
-      users.push(doc.data() as CurrentUser);
-    });
-    response.send(users);
-  }
-);
+    // ツイート
+
+    await updateUser(
+      user.id,
+      newVersion,
+      newContributions.dailyContributions.values,
+      newContributions.totalContributinos.value
+    );
+  });
+
+  response.send("ahi");
+});
