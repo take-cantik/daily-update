@@ -39,7 +39,7 @@ export const authState = atom<AuthState>({
 export const AuthInit = () => {
   const setAuthState = useSetRecoilState(authState);
   const { getTotalContributions } = useContributions();
-  const { findUserById, createUser } = useUser();
+  const { currentUser, fetch, createUser, addTwitterUser } = useUser();
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
@@ -48,9 +48,7 @@ export const AuthInit = () => {
         return;
       }
 
-      console.log(user);
-
-      const currentUser = await findUserById(user.uid);
+      await fetch(user.uid);
 
       if (!currentUser) {
         // @ts-ignore
@@ -69,20 +67,26 @@ export const AuthInit = () => {
           version: initialVersion
         };
 
-        const res = await createUser(newUser);
-
-        console.log(res);
-
-        setAuthState({
-          isLoading: false,
-          currentUser: newUser as CurrentUser
-        });
+        await createUser(newUser);
       } else {
-        setAuthState({
-          isLoading: false,
-          currentUser
-        });
+        if (!currentUser.twitterId && user.providerData.length === 2) {
+          // @ts-ignore
+          const twitterUser = user.reloadUserInfo.providerUserInfo[1];
+          await addTwitterUser(
+            currentUser.id,
+            twitterUser.screenName,
+            twitterUser.photoUrl
+          );
+        }
       }
+
+      // fetch(user.uid);
+      console.log(currentUser);
+
+      setAuthState({
+        isLoading: false,
+        currentUser
+      });
     });
 
     return () => unSub();
