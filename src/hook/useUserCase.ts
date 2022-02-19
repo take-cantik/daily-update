@@ -6,7 +6,7 @@ import {
   TotalContributions,
   useContributions
 } from "./useContributions";
-import { CreateUser, useUser } from "./useUser";
+import { useUser } from "./useUser";
 
 export const useUserCase = () => {
   const { getTotalContributions, getDaliyContributions } = useContributions();
@@ -25,7 +25,17 @@ export const useUserCase = () => {
     );
     const initialVersion = Math.floor(totalContributions.value / 1000) * 10000;
 
-    const newUser: CreateUser = {
+    const response = await createUser({
+      uid: user.uid,
+      githubId: githubId,
+      githubAvatarUrl: githubUser.photoUrl,
+      dailyContributions: dailyContributions.values,
+      totalContributions: totalContributions.value,
+      version: initialVersion
+    });
+
+    const currentUser: CurrentUser = {
+      id: response.id,
       uid: user.uid,
       githubId: githubId,
       githubAvatarUrl: githubUser.photoUrl,
@@ -34,12 +44,9 @@ export const useUserCase = () => {
       version: initialVersion
     };
 
-    const response = await createUser(newUser);
-    console.log(response);
-
     setAuthState({
       isLoading: false,
-      currentUser: newUser as CurrentUser
+      currentUser
     });
   };
 
