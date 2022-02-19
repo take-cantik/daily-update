@@ -1,6 +1,7 @@
 import { User } from "firebase/auth";
 import { useEffect } from "react";
 import { atom, useSetRecoilState } from "recoil";
+import { TotalContributions, useContributions } from "~/hook/useContributions";
 import { firebaseAuth } from "~/infra/firebase";
 
 export interface AuthState {
@@ -18,6 +19,7 @@ export const authState = atom<AuthState>({
 
 export const AuthInit = () => {
   const setAuthState = useSetRecoilState(authState);
+  const { getTotalContributions } = useContributions();
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
@@ -25,6 +27,13 @@ export const AuthInit = () => {
         setAuthState({ isLoading: false });
         return;
       }
+
+      // @ts-ignore
+      const githubId = user.reloadUserInfo.providerUserInfo[0].screenName;
+      const totalContributions: TotalContributions =
+        await getTotalContributions(githubId);
+
+      console.log(totalContributions);
 
       setAuthState({
         isLoading: false,

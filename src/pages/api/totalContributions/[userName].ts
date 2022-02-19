@@ -1,5 +1,3 @@
-// 初回に実行する用
-
 import { Octokit } from "@octokit/core";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -35,12 +33,15 @@ export default async function handler(
     }
   `;
 
-  const contributions = await octokit.graphql<Contributions>(query, {
+  const octokitRes = await octokit.graphql<Contributions>(query, {
     userName
   });
 
-  // code
-  console.log(contributions);
+  const totalContributions: number =
+    octokitRes.user.contributionsCollection.contributionCalendar
+      .totalContributions;
 
-  return response.status(200).json({});
+  return response.status(200).json({
+    value: totalContributions
+  });
 }
