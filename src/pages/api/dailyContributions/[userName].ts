@@ -34,14 +34,14 @@ export default async function handler(
   });
 
   const now = dayjs().format("YYYY-MM-DDThh:mm:ss");
-  const oneWeekBefore = dayjs()
-    .subtract(1, "week")
+  const twoDaysBefore = dayjs()
+    .subtract(2, "day")
     .format("YYYY-MM-DDThh:mm:ss");
 
   const query = `
-    query contributions ($userName:String!, $now:DateTime!, $oneWeekBefore:DateTime!) {
+    query contributions ($userName:String!, $now:DateTime!, $twoDaysBefore:DateTime!) {
       user(login: $userName) {
-        contributionsCollection(to: $now, from: $oneWeekBefore) {
+        contributionsCollection(to: $now, from: $twoDaysBefore) {
           contributionCalendar {
             weeks {
               contributionDays {
@@ -58,11 +58,19 @@ export default async function handler(
   const contributions = await octokit.graphql<Contributions>(query, {
     userName,
     now,
-    oneWeekBefore
+    twoDaysBefore
   });
 
-  // code
-  console.log(contributions);
+  const dailyContributions: number[] = [];
+  contributions.user.contributionsCollection.contributionCalendar.weeks.forEach(
+    (week) => {
+      week.contributionDays.forEach((contributionDay) => {
+        dailyContributions.push(contributionDay.contributionCount);
+      });
+    }
+  );
 
-  return response.status(200).json({});
+  return response.status(200).json({
+    values: dailyContributions
+  });
 }

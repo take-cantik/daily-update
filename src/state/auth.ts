@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { atom, useSetRecoilState } from "recoil";
+import { useContributions } from "~/hook/useContributions";
 import { useUser } from "~/hook/useUser";
 import { useUserCase } from "~/hook/useUserCase";
 import { firebaseAuth } from "~/infra/firebase";
@@ -32,6 +33,7 @@ export const AuthInit = () => {
   const setAuthState = useSetRecoilState(authState);
   const { findUserById } = useUser();
   const { create, addTwitter } = useUserCase();
+  const { getDaliyContributions } = useContributions();
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
@@ -41,6 +43,9 @@ export const AuthInit = () => {
       }
 
       const currentUser: CurrentUser | undefined = await findUserById(user.uid);
+
+      if (currentUser)
+        console.log(await getDaliyContributions(currentUser.githubId));
 
       if (!currentUser) {
         create(user);
