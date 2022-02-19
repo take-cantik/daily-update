@@ -105,7 +105,7 @@ export const AuthInit = () => {
     });
 
     return () => unSub();
-  }, []);
+  });
 
   return null;
 };

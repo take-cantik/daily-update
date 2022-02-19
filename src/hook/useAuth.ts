@@ -28,7 +28,7 @@ export const useAuth = () => {
   };
 
   return {
-    auth: useRecoilState(authState),
+    auth: useRecoilState(authState)[0],
     githubLogin,
     twitterLink,
     logout

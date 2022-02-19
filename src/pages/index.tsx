@@ -16,6 +16,7 @@ const Home: NextPage = (): JSX.Element => {
       <button onClick={twitterLink}>twitter</button>
       <button onClick={logout}>logout</button>
       <button onClick={showUser}>show user</button>
+      {auth.currentUser && <p>{auth.currentUser.id}</p>}
     </Fragment>
   );
 };
