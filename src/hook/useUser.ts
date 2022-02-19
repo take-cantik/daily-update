@@ -7,23 +7,25 @@ import {
   updateDoc,
   where
 } from "firebase/firestore";
-import { useState } from "react";
 import { firestore } from "~/infra/firebase";
-import { CreateUser, CurrentUser } from "~/state/auth";
+
+export interface CreateUser {
+  uid: string;
+  githubId: string;
+  githubAvatarUrl: string;
+  contributions: number;
+  version: number;
+}
 
 export const useUser = () => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | undefined>(
-    undefined
-  );
-
-  const fetch = async (uid: string) => {
+  const findUserById = async (uid: string) => {
     try {
       const response = await getDocs(
         query(collection(firestore, "users"), where("uid", "==", uid))
       );
 
       if (response.docs.length !== 0) {
-        setCurrentUser({
+        return {
           id: response.docs[0].id,
           uid: response.docs[0].data().uid,
           githubId: response.docs[0].data().githubId,
@@ -32,7 +34,7 @@ export const useUser = () => {
           version: response.docs[0].data().version,
           twitterId: response.docs[0].data().twitterId,
           twitterAvatarUrl: response.docs[0].data().twitterAvatarUrl
-        });
+        };
       }
     } catch {
       throw new Error();
@@ -66,5 +68,5 @@ export const useUser = () => {
     }
   };
 
-  return { currentUser, fetch, createUser, addTwitterUser };
+  return { findUserById, createUser, addTwitterUser };
 };

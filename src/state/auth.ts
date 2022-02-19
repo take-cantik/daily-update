@@ -1,16 +1,8 @@
 import { useEffect } from "react";
 import { atom, useSetRecoilState } from "recoil";
 import { TotalContributions, useContributions } from "~/hook/useContributions";
-import { useUser } from "~/hook/useUser";
+import { CreateUser, useUser } from "~/hook/useUser";
 import { firebaseAuth } from "~/infra/firebase";
-
-export interface CreateUser {
-  uid: string;
-  githubId: string;
-  githubAvatarUrl: string;
-  contributions: number;
-  version: number;
-}
 
 export interface CurrentUser {
   id: string;
@@ -39,7 +31,7 @@ export const authState = atom<AuthState>({
 export const AuthInit = () => {
   const setAuthState = useSetRecoilState(authState);
   const { getTotalContributions } = useContributions();
-  const { currentUser, fetch, createUser, addTwitterUser } = useUser();
+  const { findUserById, createUser, addTwitterUser } = useUser();
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
@@ -48,7 +40,7 @@ export const AuthInit = () => {
         return;
       }
 
-      await fetch(user.uid);
+      const currentUser: CurrentUser | undefined = await findUserById(user.uid);
 
       if (!currentUser) {
         // @ts-ignore
@@ -67,7 +59,15 @@ export const AuthInit = () => {
           version: initialVersion
         };
 
-        await createUser(newUser);
+        const response = await createUser(newUser);
+        console.log(response);
+
+        setAuthState({
+          isLoading: false,
+          currentUser: newUser as CurrentUser
+        });
+
+        return;
       } else {
         if (!currentUser.twitterId && user.providerData.length === 2) {
           // @ts-ignore
@@ -77,11 +77,26 @@ export const AuthInit = () => {
             twitterUser.screenName,
             twitterUser.photoUrl
           );
+
+          const newUser: CurrentUser = {
+            id: currentUser.id,
+            uid: currentUser.uid,
+            githubId: currentUser.githubId,
+            githubAvatarUrl: currentUser.githubAvatarUrl,
+            contributions: currentUser.contributions,
+            version: currentUser.version,
+            twitterId: twitterUser.screenName,
+            twitterAvatarUrl: twitterUser.photoUrl
+          };
+
+          setAuthState({
+            isLoading: false,
+            currentUser: newUser
+          });
+
+          return;
         }
       }
-
-      // fetch(user.uid);
-      console.log(currentUser);
 
       setAuthState({
         isLoading: false,
@@ -90,7 +105,7 @@ export const AuthInit = () => {
     });
 
     return () => unSub();
-  });
+  }, []);
 
   return null;
 };
