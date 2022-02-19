@@ -53,7 +53,6 @@ export const useUserCase = () => {
   const addTwitter = async (user: User, currentUser: CurrentUser) => {
     // @ts-ignore
     const twitterUser = user.reloadUserInfo.providerUserInfo[1];
-    console.log(twitterUser);
 
     await addTwitterUser(
       currentUser.id,

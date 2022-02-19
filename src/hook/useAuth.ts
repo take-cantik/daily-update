@@ -8,10 +8,11 @@ import {
 } from "firebase/auth";
 import { useRecoilState } from "recoil";
 import { firebaseAuth } from "~/infra/firebase";
-import { authState, CurrentUser } from "~/state/auth";
+import { authState } from "~/state/auth";
 import { useUserCase } from "./useUserCase";
 
 export const useAuth = () => {
+  const auth = useRecoilState(authState)[0];
   const { addTwitter } = useUserCase();
 
   const githubLogin = async (): Promise<UserCredential> => {
@@ -19,11 +20,13 @@ export const useAuth = () => {
     return await signInWithPopup(firebaseAuth, provider);
   };
 
-  const twitterLink = async (currentUser: CurrentUser): Promise<void> => {
+  const twitterLink = async (): Promise<void> => {
     const provider = new TwitterAuthProvider();
     if (firebaseAuth.currentUser) {
       const docRef = await linkWithPopup(firebaseAuth.currentUser, provider);
-      addTwitter(docRef.user, currentUser);
+      if (auth.currentUser) {
+        addTwitter(docRef.user, auth.currentUser);
+      }
     }
   };
 
@@ -32,7 +35,7 @@ export const useAuth = () => {
   };
 
   return {
-    auth: useRecoilState(authState)[0],
+    auth,
     githubLogin,
     twitterLink,
     logout

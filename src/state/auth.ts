@@ -36,8 +36,6 @@ export const AuthInit = () => {
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
-      console.log("ahi!");
-
       if (!user) {
         setAuthState({ isLoading: false });
         return;
@@ -47,7 +45,6 @@ export const AuthInit = () => {
 
       if (!currentUser) {
         create(user);
-        console.log("created!");
         return;
       }
 
