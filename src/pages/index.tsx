@@ -16,7 +16,15 @@ const Home: NextPage = (): JSX.Element => {
       <button onClick={twitterLink}>twitter</button>
       <button onClick={logout}>logout</button>
       <button onClick={showUser}>show user</button>
-      {auth.currentUser && <p>{auth.currentUser.id}</p>}
+      {auth.currentUser && (
+        <Fragment>
+          <p>{auth.currentUser.id}</p>
+          <img src={auth.currentUser.githubAvatarUrl} />
+          {auth.currentUser.twitterId && (
+            <img src={auth.currentUser.twitterAvatarUrl} />
+          )}
+        </Fragment>
+      )}
     </Fragment>
   );
 };

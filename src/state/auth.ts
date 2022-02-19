@@ -32,10 +32,12 @@ export const authState = atom<AuthState>({
 export const AuthInit = () => {
   const setAuthState = useSetRecoilState(authState);
   const { findUserById } = useUser();
-  const { create, addTwitter } = useUserCase();
+  const { create } = useUserCase();
 
   useEffect(() => {
     const unSub = firebaseAuth.onAuthStateChanged(async (user) => {
+      console.log("ahi!");
+
       if (!user) {
         setAuthState({ isLoading: false });
         return;
@@ -45,12 +47,8 @@ export const AuthInit = () => {
 
       if (!currentUser) {
         create(user);
+        console.log("created!");
         return;
-      } else {
-        if (!currentUser.twitterId && user.providerData.length === 2) {
-          addTwitter(user, currentUser);
-          return;
-        }
       }
 
       setAuthState({
