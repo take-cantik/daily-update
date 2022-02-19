@@ -4,7 +4,16 @@ import { TotalContributions, useContributions } from "~/hook/useContributions";
 import { useUser } from "~/hook/useUser";
 import { firebaseAuth } from "~/infra/firebase";
 
+export interface CreateUser {
+  uid: string;
+  githubId: string;
+  githubAvatarUrl: string;
+  contributions: number;
+  version: number;
+}
+
 export interface CurrentUser {
+  id: string;
   uid: string;
   githubId: string;
   githubAvatarUrl: string;
@@ -52,7 +61,7 @@ export const AuthInit = () => {
         const initialVersion =
           Math.floor(totalContributions.value / 1000) * 10000;
 
-        const newUser = {
+        const newUser: CreateUser = {
           uid: user.uid,
           githubId: githubId,
           githubAvatarUrl: githubUser.photoUrl,
@@ -66,7 +75,7 @@ export const AuthInit = () => {
 
         setAuthState({
           isLoading: false,
-          currentUser: newUser
+          currentUser: newUser as CurrentUser
         });
       } else {
         setAuthState({
