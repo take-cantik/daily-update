@@ -1,13 +1,4 @@
-import fetch, { Request, RequestInit, Response } from "node-fetch";
-
-interface Global {
-  fetch(
-    url: string | Request,
-    init?: RequestInit | undefined
-  ): Promise<Response>;
-}
-declare const global: Global;
-global.fetch = fetch;
+import fetch from "node-fetch";
 import { baseUrl } from "..";
 import { DaliyContributions, TotalContributions } from "../types";
 
