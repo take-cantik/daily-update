@@ -6,7 +6,7 @@ interface Global {
     init?: RequestInit | undefined
   ): Promise<Response>;
 }
-declare let global: Global;
+declare const global: Global;
 global.fetch = fetch;
 import { baseUrl } from "..";
 import { DaliyContributions, TotalContributions } from "../types";
