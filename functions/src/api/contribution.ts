@@ -1,9 +1,6 @@
-import { config } from "firebase-functions";
 import fetch from "node-fetch";
+import { baseUrl } from "..";
 import { DaliyContributions, TotalContributions } from "../types";
-
-// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-const baseUrl = config().base.url;
 
 export const getContributinos = async (githubId: string) => {
   const responses = await Promise.all([

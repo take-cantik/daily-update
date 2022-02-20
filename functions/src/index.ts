@@ -1,5 +1,5 @@
 import { credential, firestore, initializeApp } from "firebase-admin";
-import { https } from "firebase-functions";
+import { config, https } from "firebase-functions";
 import { getContributinos } from "./api/contribution";
 import { getUserList, updateUser } from "./api/user";
 import { CurrentUser } from "./types";
@@ -10,6 +10,7 @@ const app = initializeApp({
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DETABASE_URL
 });
 export const db = firestore(app);
+export const baseUrl = config().base.url;
 
 export const dailyUpdate = https.onRequest(async (request, response) => {
   const users: CurrentUser[] = await getUserList();
