@@ -1,4 +1,4 @@
-import { config } from "firebase-functions/v1";
+import { config } from "firebase-functions";
 import fetch from "node-fetch";
 import { DaliyContributions, TotalContributions } from "../types";
 
