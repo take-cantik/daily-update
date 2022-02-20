@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import { AuthInit } from "~/state/auth";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function myApp({ Component, pageProps }: AppProps) {
   return (
     <RecoilRoot>
       <AuthInit />
@@ -13,4 +13,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default myApp;
