@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+declare module "node-fetch";
 import { baseUrl } from "..";
 import { DaliyContributions, TotalContributions } from "../types";
 
