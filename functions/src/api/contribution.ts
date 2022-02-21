@@ -5,8 +5,9 @@ import { baseUrl } from "..";
 
 export const getContributinos = async (githubId: string) => {
   const headers = {
-    Username: config().basic.username,
-    Password: config().basic.password
+    Authorization: `Basic ${btoa(config().basic.username as string)}:${btoa(
+      config().basic.password as string
+    )}`
   };
 
   const responses = await Promise.all([
