@@ -1,7 +1,7 @@
 import { config } from "firebase-functions";
 import fetch from "node-fetch";
 import { baseUrl } from "..";
-import { DaliyContributions, TotalContributions } from "../types";
+// import { DaliyContributions, TotalContributions } from "../types";
 
 export const getContributinos = async (githubId: string) => {
   const headers = {
@@ -14,8 +14,8 @@ export const getContributinos = async (githubId: string) => {
     fetch(`${baseUrl}/api/totalContributions/${githubId}`, { headers })
   ]);
 
-  const dailyContributions = (await responses[0].json()) as DaliyContributions;
-  const totalContributinos = (await responses[1].json()) as TotalContributions;
+  const dailyContributions = await responses[0].json(); // as DaliyContributions;
+  const totalContributinos = await responses[1].json(); // as TotalContributions;
 
   return {
     dailyContributions,
