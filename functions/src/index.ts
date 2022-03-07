@@ -1,5 +1,5 @@
 import { credential, firestore, initializeApp } from "firebase-admin";
-import { config, https } from "firebase-functions";
+import { config, https, logger } from "firebase-functions";
 import { getContributinos } from "./api/contribution";
 import { getUserList } from "./api/user";
 import { CurrentUser } from "./types";
@@ -17,12 +17,12 @@ export const dailyUpdate = https.onRequest(async (request, response) => {
 
   const users: CurrentUser[] = await getUserList();
 
-  console.log(users);
+  logger.log(users);
 
   users.forEach(async (user: CurrentUser) => {
     const newContributions = await getContributinos(user.githubId);
-    console.log("newcontributions");
-    console.log(newContributions);
+    logger.log("newcontributions");
+    logger.log(newContributions);
     // const newVersion = updateVersion(
     //   user.version,
     //   user.dailyContributions,
