@@ -33,7 +33,7 @@ export const updateVersion = (
 
   if (
     Math.floor(afterTotalContributions / 1000) -
-      Math.floor(beforeTotalContributions / 1000) >
+      Math.floor(beforeTotalContributions / 1000) >=
     1
   ) {
     newVersion = (Math.floor((newVersion /= 10000)) + 1) * 10000;

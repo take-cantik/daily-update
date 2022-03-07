@@ -1,5 +1,5 @@
 import { credential, firestore, initializeApp } from "firebase-admin";
-import { config, https, logger } from "firebase-functions";
+import { config, https } from "firebase-functions";
 import { getContributinos } from "./api/contribution";
 import { getUserList, updateUser } from "./api/user";
 import { CurrentUser } from "./types";
@@ -17,12 +17,8 @@ export const dailyUpdate = https.onRequest(async (request, response) => {
 
   const users: CurrentUser[] = await getUserList();
 
-  logger.log(users);
-
   users.forEach(async (user: CurrentUser) => {
     const newContributions = await getContributinos(user.githubId);
-    logger.log("newcontributions");
-    logger.log(newContributions);
     const newVersion = updateVersion(
       user.version,
       user.dailyContributions,
@@ -30,8 +26,6 @@ export const dailyUpdate = https.onRequest(async (request, response) => {
       newContributions.dailyContributions.values,
       newContributions.totalContributinos.value
     );
-    console.log("newVersion");
-    console.log(newVersion);
 
     // ツイート
 
