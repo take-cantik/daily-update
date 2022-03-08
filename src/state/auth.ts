@@ -41,6 +41,8 @@ export const AuthInit = () => {
         return;
       }
 
+      console.log(user);
+
       const currentUser: CurrentUser | undefined = await findUserById(user.uid);
 
       if (!currentUser) {

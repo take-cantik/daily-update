@@ -1,7 +1,8 @@
 import { credential, firestore, initializeApp } from "firebase-admin";
-import { config, https } from "firebase-functions";
+import { config, https, logger } from "firebase-functions";
 import { getContributinos } from "./api/contribution";
 import { getUserList, updateUser } from "./api/user";
+import { tweet } from "./api/twitter";
 import { CurrentUser } from "./types";
 import { updateVersion } from "./util/version";
 
@@ -28,6 +29,9 @@ export const dailyUpdate = https.onRequest(async (request, response) => {
     );
 
     // ツイート
+    logger.log("ツイート開始");
+    const tweetRes = await tweet("");
+    logger.log(tweetRes);
 
     await updateUser(
       user.id,
